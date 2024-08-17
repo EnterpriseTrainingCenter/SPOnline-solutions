@@ -81,7 +81,7 @@ function Install-AppxPackage {
         # The minimum version of the package
         [Parameter()]
         [string]
-        $MinimumVersion
+        $MinimumVersion = '0'
     )
 
     $appXPackages = Get-AppxPackage -Name $Name |
