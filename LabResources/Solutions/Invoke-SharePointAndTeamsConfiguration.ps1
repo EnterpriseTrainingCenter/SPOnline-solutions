@@ -185,7 +185,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Add-SharePointAdministrator.ps1'
 )
-powershell.exe -File $file
+pwsh.exe -File $file
 
 
 #endregion Exercise 2: Manage the SharePoint Administrator role
@@ -198,7 +198,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'New-TeamAndChannels.ps1'
 )
-powershell.exe -File $file
+pwsh.exe -File $file
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
