@@ -51,8 +51,8 @@ function Compare-SemanticVersion {
     if ($firstVersionFirst -eq $secondVersionFirst) {
         if ($firstVersionRest.Count -and $secondVersionRest.Count) {
             $result = Compare-SemanticVersion `
-                -FirstVersion $firstVersionRest `
-                -SecondVersion $secondVersionRest
+                -FirstVersion ($firstVersionRest -join '.') `
+                -SecondVersion ($secondVersionRest -join '.')
         }
     }
 
@@ -91,7 +91,8 @@ function Install-AppxPackage {
         foreach ($appXPackage in $appXPackages) {
             $found = $found -or (
                 Compare-SemanticVersion `
-                    -FirstVersion $appXPackage -SecondVersion $MinimumVersion
+                    -FirstVersion $appXPackage.Version `
+                    -SecondVersion $MinimumVersion
             ) -ge 0
         }
     }
