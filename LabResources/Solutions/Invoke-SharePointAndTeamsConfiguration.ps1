@@ -35,35 +35,13 @@ function Install-AppxPackage {
         # Description of package
         [Parameter()]
         [string]
-        $Description = $Name,
-        # Minimum version of package
-        [Parameter()]
-        [string]
-        $MinimumVersion = '0.0.0'
+        $Description = $Name
     )
 
-    $splitMinimumVersion = $MinimumVersion -split '\.'
-    $found = $false
-    $appXPackages = Get-AppxPackage -Name $Name |
+    $appXPackage = Get-AppxPackage -Name $Name |
         Where-Object { $PSItem.Architecture -eq 'x64' }
 
-    if ($appXPackage) {
-        foreach ($appXPackage in $appXPackages) {
-            $version = $appXPackage.Version -split '\.'
-            $found = $version[0] -gt $splitMinimumVersion[0]
-            $found = $found -or (
-                $version[0] -eq $splitMinimumVersion[0] -and `
-                $version[1] -gt $splitMinimumVersion[1]
-            )
-            $found = $found -or (
-                $version[0] -eq $splitMinimumVersion[0] -and `
-                $version[1] -eq $splitMinimumVersion[1] -and `
-                $version[2] -ge $splitMinimumVersion[2]
-            )
-        }
-    }
-
-    if (-not $found) {
+    if (-not $appXPackage) {
         $destination = "~\Downloads\$Filename"
     
         if (-not (Test-Path -Path $destination)) {
@@ -103,11 +81,10 @@ Install-AppxPackage `
         'https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx' `
     -Filename 'Microsoft.UI.Xaml.2.8.x64.appx' `
     -Description 'WinUI3'
-Install-AppxPackage `
-    -Name 'Microsoft.DesktopAppInstaller' `
-    -Source 'https://aka.ms/getwinget' `
-    -Filename 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' `
-    -Description 'WinGet'
+
+Write-Verbose '            Updating the Desktop App Installer'
+Install-Script -Name 'Update-InboxApp' -Force
+.\Update-InboxApp.ps1 -PackageFamilyName 'Microsoft.DesktopAppInstaller'
 
 #endregion Task 1: Install WinGet
 
