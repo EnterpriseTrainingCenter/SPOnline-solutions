@@ -35,14 +35,35 @@ function Install-AppxPackage {
         # Description of package
         [Parameter()]
         [string]
-        $Description = $Name
+        $Description = $Name,
+        # Minimum version of package
+        [Parameter()]
+        [string]
+        $MinimumVersion = '0.0.0'
     )
 
-    if (
-        (
-            Get-AppxPackage -Name $Name
-        ).Architecture -notcontains 'x64'
-    ) {
+    $splitMinimumVersion = $MinimumVersion -split '\.'
+    $found = $false
+    $appXPackages = Get-AppxPackage -Name $Name |
+        Where-Object { $PSItem.Architecture -eq 'x64' }
+
+    if ($appXPackage) {
+        foreach ($appXPackage in $appXPackages) {
+            $version = $appXPackage.Version -split '\.'
+            $found = $version[0] -gt $splitMinimumVersion[0]
+            $found = $found -or (
+                $version[0] -eq $splitMinimumVersion[0] -and `
+                $version[1] -gt $splitMinimumVersion[1]
+            )
+            $found = $found -or (
+                $version[0] -eq $splitMinimumVersion[0] -and `
+                $version[1] -eq $splitMinimumVersion[1] -and `
+                $version[2] -ge $splitMinimumVersion[2]
+            )
+        }
+    }
+
+    if (-not $found) {
         $destination = "~\Downloads\$Filename"
     
         if (-not (Test-Path -Path $destination)) {
