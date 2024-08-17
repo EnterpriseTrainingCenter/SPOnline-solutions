@@ -29,7 +29,7 @@ Write-Host '        Task 1: Install WinGet'
 
 Write-Verbose '            Updating the Desktop App Installer'
 Install-Script -Name 'Update-InboxApp' -Scope CurrentUser -Force
-.\Update-InboxApp.ps1 -PackageFamilyName 'Microsoft.DesktopAppInstaller'
+Update-InboxApp.ps1 -PackageFamilyName 'Microsoft.DesktopAppInstaller'
 
 #endregion Task 1: Install WinGet
 
