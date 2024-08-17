@@ -28,7 +28,7 @@ Write-Host '    Exercise 1: Get started with PowerShell'
 Write-Host '        Task 1: Install WinGet'
 
 Write-Verbose '            Updating the Desktop App Installer'
-Install-Script -Name 'Update-InboxApp' -Force
+Install-Script -Name 'Update-InboxApp' -Scope CurrentUser -Force
 .\Update-InboxApp.ps1 -PackageFamilyName 'Microsoft.DesktopAppInstaller'
 
 #endregion Task 1: Install WinGet
@@ -72,7 +72,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Add-SharePointAdministrator.ps1'
 )
-powershell.exe -File $file
+pwsh.exe -File $file
 
 
 #endregion Exercise 2: Manage the SharePoint Administrator role
@@ -85,7 +85,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'New-TeamAndChannels.ps1'
 )
-powershell.exe -File $file
+pwsh.exe -File $file
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
