@@ -15,6 +15,104 @@ if (-not $SkipDependencies) {
 
 #endregion Prerequisites
 
+#region Helper function
+
+<# 
+    returns -1 if first version is less than second
+    0 if versions are equal
+    1 if first version is greater than second
+#>
+
+function Compare-SemanticVersion {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $FirstVersion,
+        [Parameter(Mandatory)]
+        [string]
+        $SecondVersion
+    )
+
+
+    $firstVersionFirst, $firstVersionRest = $firstVersion -split '\.'
+    $secondVersionFirst, $secondVersionRest = $secondVersion  -split '\.'
+
+    $result = 0
+
+    if ($firstVersionFirst -lt $secondVersionFirst) {
+        $result = -1
+    }
+
+    if ($firstVersionFirst -gt $secondVersionFirst ) {
+        $result = 1
+    }
+
+    if ($firstVersionFirst -eq $secondVersionFirst) {
+        if ($firstVersionRest.Count -and $secondVersionRest.Count) {
+            $result = Compare-SemanticVersion `
+                -FirstVersion $firstVersionRest `
+                -SecondVersion $secondVersionRest
+        }
+    }
+
+    return $result
+}
+
+function Install-AppxPackage {
+    [CmdletBinding()]
+    param (
+        # Name of Appx package
+        [Parameter(Mandatory)]
+        [string]
+        $Name,
+        # Download url for package
+        [Parameter(Mandatory)]
+        [string]
+        $Source,
+        # Filename of downloaded package
+        [Parameter(Mandatory)]
+        [string]
+        $Filename,
+        # Description of package
+        [Parameter()]
+        [string]
+        $Description = $Name,
+        # The minimum version of the package
+        [Parameter()]
+        [string]
+        $MinimumVersion
+    )
+
+    $appXPackages = Get-AppxPackage -Name $Name |
+        Where-Object { $PSItem.Architecture -eq 'x64' }
+
+    if ($appXPackages) {
+        foreach ($appXPackage in $appXPackages) {
+            $found = $found -or (
+                Compare-SemanticVersion `
+                    -FirstVersion $appXPackage -SecondVersion $MinimumVersion
+            ) -ge 0
+        }
+    }
+
+    if (-not $found) {
+        $destination = "~\Downloads\$Filename"
+    
+        if (-not (Test-Path -Path $destination)) {
+            Write-Verbose "            Download package $Description"
+    
+            Start-BitsTransfer -Source $Source -Destination $destination
+        }
+    
+        Write-Verbose "            Install package $Description"
+    
+        Add-AppxPackage -Path $destination
+    }
+}
+
+#endregion Helper functions
+
 #region Lab: Get started with SharePoint
 
 Write-Host 'Lab: Get started with SharePoint'
@@ -27,9 +125,23 @@ Write-Host '    Exercise 1: Get started with PowerShell'
 
 Write-Host '        Task 1: Install WinGet'
 
-Write-Verbose '            Updating the Desktop App Installer'
-Install-Script -Name 'Update-InboxApp' -Scope CurrentUser -Force
-Update-InboxApp.ps1 -PackageFamilyName 'Microsoft.DesktopAppInstaller'
+Install-AppxPackage `
+    -Name 'Microsoft.VCLibs.140.00' `
+    -Source 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx' `
+    -Filename 'Microsoft.VCLibs.x64.14.00.Desktop.appx' `
+    -Description 'Microsoft Visual C++ 2015 Redistributable'
+Install-AppxPackage `
+    -Name 'Microsoft.UI.Xaml.2.8' `
+    -Source `
+        'https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx' `
+    -Filename 'Microsoft.UI.Xaml.2.8.x64.appx' `
+    -Description 'WinUI3'
+Install-AppxPackage `
+    -Name 'Microsoft.DesktopAppInstaller' `
+    -Source 'https://aka.ms/getwinget' `
+    -Filename 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' `
+    -Description 'WinGet' `
+    -MinimumVersion '1.23.1911'
 
 #endregion Task 1: Install WinGet
 
@@ -72,7 +184,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Add-SharePointAdministrator.ps1'
 )
-pwsh.exe -File $file
+powershell.exe -File $file
 
 
 #endregion Exercise 2: Manage the SharePoint Administrator role
@@ -85,7 +197,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'New-TeamAndChannels.ps1'
 )
-pwsh.exe -File $file
+powershell.exe -File $file
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
