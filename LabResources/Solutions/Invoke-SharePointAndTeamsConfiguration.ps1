@@ -164,14 +164,28 @@ winget install --id 9N0DX20HK701 --accept-package-agreements --accept-source-agr
 
 Write-Host '        Task 3: Install PowerShell modules'
 
-$file = (Join-Path -Path $PSScriptRoot -ChildPath 'Install-CoreModules.ps1')
-pwsh.exe -File $file
+$file = (
+    Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowwerShell.ps1'
+)
+pwsh.exe -File $file -Args "-Verbose:$Verbose"
+
+$file = (
+    Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1'
+)
+pwsh.exe -File $file -Args "-Verbose:$Verbose"
+
+<#
+    Install the Teams and Graph modules in the current environment again,
+    so scripts can run anyways.
+#>
+
+. (Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1')
 
 $file = (
     Join-Path `
-        -Path $PSScriptRoot -ChildPath 'Install-WindowsPowerShellModules.ps1'
+        -Path $PSScriptRoot -ChildPath 'Install-OnlineSharePointModule.ps1'
 )
-powershell.exe -File $file
+powershell.exe -File $file -Args "-Verbose:$Verbose"
 
 #endregion Task 4: Install PowerShell modules
 
@@ -181,24 +195,11 @@ powershell.exe -File $file
 
 Write-Host '    Exercise 2: Manage the SharePoint Administrator role'
 
-$file = (
-    Join-Path `
-        -Path $PSScriptRoot -ChildPath 'Add-SharePointAdministrator.ps1'
-)
-pwsh.exe -File $file
-
-
 #endregion Exercise 2: Manage the SharePoint Administrator role
 
 #region Exercise 5: Explore SharePoint integration with Teams
 
 Write-Host '    Exercise 5: Explore SharePoint integration with Teams'
-
-$file = (
-    Join-Path `
-        -Path $PSScriptRoot -ChildPath 'New-TeamAndChannels.ps1'
-)
-pwsh.exe -File $file
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
