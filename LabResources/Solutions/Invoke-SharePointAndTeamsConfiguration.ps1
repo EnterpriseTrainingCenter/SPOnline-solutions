@@ -155,17 +155,17 @@ winget install --id 9MZ1SNWT0N5D --accept-package-agreements --accept-source-agr
 
 #region Task 3: Install Windows Terminal
 
-Write-Host '        Task 2: Install Windows Terminal'
+Write-Host '        Task 3: Install Windows Terminal'
 winget install --id 9N0DX20HK701 --accept-package-agreements --accept-source-agreements --force
 
 #endregion Task 3: Install Windows Terminal
 
 #region Task 4: Install PowerShell modules
 
-Write-Host '        Task 3: Install PowerShell modules'
+Write-Host '        Task 4: Install PowerShell modules'
 
 $file = (
-    Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowwerShell.ps1'
+    Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowerShell.ps1'
 )
 pwsh.exe -File $file -Args "-Verbose:$Verbose"
 
@@ -208,8 +208,8 @@ Write-Verbose '            Get the SharePoint Administrator role'
 $roleName = 'SharePoint Administrator'
 $role = Get-MgDirectoryRole -Filter "Displayname eq '$roleName'"
 
-Write-Verbose '            Add role from template if role is not present yet'
 if ($null -eq $role) {
+    Write-Verbose '            Add role from template'
     $roleTemplate = Get-MgDirectoryRoleTemplate |
         Where-Object { $PSItem.Displayname -eq $roleName }
     New-MgDirectoryRole `
