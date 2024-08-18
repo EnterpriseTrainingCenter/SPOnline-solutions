@@ -195,11 +195,58 @@ powershell.exe -File $file -Args "-Verbose:$Verbose"
 
 Write-Host '    Exercise 2: Manage the SharePoint Administrator role'
 
+#region Task 2: Verify the SharePoint Administrator role holders
+
+Write-Host '        Task 2: Verify the SharePoint Administrator role holders'
+
+Write-Verbose '            Sign in to Microsoft Graph'
+Write-Warning `
+    'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
+Connect-MgGraph -Scopes 'RoleManagement.ReadWrite.Directory'
+
+Write-Verbose '            Get the SharePoint Administrator role'
+$roleName = 'SharePoint Administrator'
+$role = Get-MgDirectoryRole -Filter "Displayname eq '$roleName'"
+
+Write-Verbose '            Add role from template if role is not present yet'
+if ($null -eq $role) {
+    $roleTemplate = Get-MgDirectoryRoleTemplate |
+        Where-Object { $PSItem.Displayname -eq $roleName }
+    New-MgDirectoryRole `
+        -DisplayName $roleName -RoleTemplateId $roleTemplate.Id
+    $role = Get-MgDirectoryRole -Filter "Displayname eq '$roleName'"
+}
+
+Write-Verbose '            Get the role members and store them in a variable'
+$mgDirectoryRoleMember = Get-MgDirectoryRoleMember -DirectoryRoleId $role.Id
+$sharePointAdmins = $mgDirectoryRoleMember | ForEach-Object { Get-MgUser -UserId $PSItem.Id }
+
+#endregion Task 2: Verify the SharePoint Administrator role holders
+
+#region Task 1: Assign the SharePoint Administrator role
+
+Write-Verbose '        Task 1: Assign the SharePoint Administrator role'
+
+$displayname = 'Lynne Robbins'
+if ($sharePointAdmins.DisplayName -notcontains $displayname) {
+    Write-Verbose `
+        '            Find and store the user Lynne Robbins in a variable'
+    $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
+    New-MgDirectoryRoleMemberByRef `
+        -DirectoryRoleId $role.Id `
+        –OdataId "https://graph.microsoft.com/v1.0/users/$($mgUser.Id)"
+}
+
+Write-Verbose '            Disconnect from Microsoft Graph'
+Disconnect-Graph
+
 #endregion Exercise 2: Manage the SharePoint Administrator role
 
 #region Exercise 5: Explore SharePoint integration with Teams
 
 Write-Host '    Exercise 5: Explore SharePoint integration with Teams'
+
+#endregion Task 1: Assign the SharePoint Administrator role
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
