@@ -311,6 +311,8 @@ if (($team | Get-TeamChannel).DisplayName -notcontains $displayname) {
     $null = $team |
         New-TeamChannel `
             -DisplayName $displayname -MembershipType Shared -Owner $owner
+    # We have to wait a few seconds for the channel to be created
+    Start-Sleep -Seconds 10
 }
 
 $name = 'Patti Fernandez'
