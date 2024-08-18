@@ -264,6 +264,8 @@ Write-Warning `
 $null = Connect-MicrosoftTeams
 
 $displayname = 'SharePoint Project'
+$ownerDisplayname = 'Lynne Robbins'
+$owner = (Get-MgUser -Filter "Displayname eq '$ownerDisplayname'").UserPrincipalName
 $team = Get-Team -DisplayName $displayname
 if (-not $team) {
     Write-Verbose "            Create a team with the name $displayname"
