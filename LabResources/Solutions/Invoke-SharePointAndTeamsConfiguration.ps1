@@ -239,13 +239,14 @@ if ($sharePointAdmins.DisplayName -notcontains $displayname) {
     Write-Verbose `
         '            Find and store the user Lynne Robbins in a variable'
     $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
+
+    Write-Verbose '            Add the stored user to the role'
     New-MgDirectoryRoleMemberByRef `
         -DirectoryRoleId $role.Id `
         -OdataId "https://graph.microsoft.com/v1.0/users/$($mgUser.Id)"
 }
 
-Write-Verbose '            Disconnect from Microsoft Graph'
-$null = Disconnect-Graph
+#endregion Task 1: Assign the SharePoint Administrator role
 
 #endregion Exercise 2: Manage the SharePoint Administrator role
 
@@ -253,8 +254,80 @@ $null = Disconnect-Graph
 
 Write-Host '    Exercise 5: Explore SharePoint integration with Teams'
 
-#endregion Task 1: Assign the SharePoint Administrator role
+#region Task 1: Create a new team
+
+Write-Host '        Task 1: Create a new team'
+
+Write-Verbose '            Sign in to Microsoft Teams'
+Write-Warning `
+    'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
+$null = Connect-MicrosoftTeams
+
+$displayname = 'SharePoint Project'
+$team = Get-Team -DisplayName $displayname
+if (-not $team) {
+    Write-Verbose "            Create a team with the name $displayname"
+    $ownerDisplayname = 'Lynne Robbins'
+    $owner = (Get-MgUser -Filter "Displayname eq '$ownerDisplayname'").UserPrincipalName
+    $team = New-Team `
+        -DisplayName 'SharePoint Project' `
+        -MailNickName 'SharePointProject' `
+        -Owner $owner
+}
+
+$displayname = 'Megan Bowen'
+if (($team | Get-TeamUser).Name -notcontains $displayname) {
+    Write-Verbose "            Add $displayname to the team"
+    $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
+    $team | Add-TeamUser -User $mgUser.UserPrincipalName
+}
+
+#endregion Task 1: Create a new team
+
+#region Task 2: Create a standard channel
+
+Write-Host '        Task 2: Create a standard channel'
+
+$displayname = 'Planning'
+if (($team | Get-TeamChannel).DisplayName -notcontains $displayname) {
+    Write-Verbose `
+        "            Create a standard channel with the name $displayname"
+    $null = $team |
+        New-TeamChannel -DisplayName $displayname -MembershipType Standard
+}
+
+#endregion Task 2: Create a standard channel
+
+#region Task 4: Create a shared channel
+
+Write-Host '        Task 4: Create a shared channel'
+
+$displayname = 'Governance'
+if (($team | Get-TeamChannel).DisplayName -notcontains $displayname) {
+        Write-Verbose `
+        "            Create a shared channel with the name $displayname"
+    $null = $team |
+        New-TeamChannel -DisplayName $displayname -MembershipType Shared
+}
+
+$name = 'Patti Fernandez'
+if (
+    (
+        $team | Get-TeamChannelUser -DisplayName $displayname
+    ).Name -notcontains $name
+) {
+    Write-Verbose "            Add $name to the shared channel"
+    $user = (Get-MgUser -Filter "Displayname eq '$name'").UserPrincipalName
+    $team | Add-TeamChannelUser -DisplayName $displayname -User $user
+}
+
+#endregion Task 4: Create a standard channel
+
+Write-Verbose '        Disconnect from Microsoft Teams'
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
+
+Write-Verbose '    Disconnect from Microsoft Graph'
+$null = Disconnect-Graph
 
 #endregion Lab: Get started with SharePoint
