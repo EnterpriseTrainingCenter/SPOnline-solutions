@@ -149,15 +149,22 @@ Install-AppxPackage `
 #region Task 2: Install PowerShell
 
 Write-Host '        Task 2: Install PowerShell'
-winget install --id 9MZ1SNWT0N5D --accept-package-agreements --accept-source-agreements --force
+
+if (-not (Get-AppxPackage -Name 'Microsoft.PowerShell')) {
+    Write-Verbose '            Download and install PowerShell'
+    winget install --id 9MZ1SNWT0N5D --accept-package-agreements --accept-source-agreements --force
+}
 
 #endregion Task 3: Install PowerShell
 
 #region Task 3: Install Windows Terminal
 
 Write-Host '        Task 3: Install Windows Terminal'
-winget install --id 9N0DX20HK701 --accept-package-agreements --accept-source-agreements --force
 
+if (-not (Get-AppxPackage -Name 'Microsoft.WindowsTerminal')) {
+    Write-Verbose '            Download and install Windows Terminal'    
+    winget install --id 9N0DX20HK701 --accept-package-agreements --accept-source-agreements --force
+}
 #endregion Task 3: Install Windows Terminal
 
 #region Task 4: Install PowerShell modules
@@ -202,7 +209,7 @@ Write-Host '        Task 2: Verify the SharePoint Administrator role holders'
 Write-Verbose '            Sign in to Microsoft Graph'
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
-Connect-MgGraph -Scopes 'RoleManagement.ReadWrite.Directory'
+Connect-MgGraph -Scopes 'RoleManagement.ReadWrite.Directory' -NoWelcome
 
 Write-Verbose '            Get the SharePoint Administrator role'
 $roleName = 'SharePoint Administrator'
@@ -238,7 +245,7 @@ if ($sharePointAdmins.DisplayName -notcontains $displayname) {
 }
 
 Write-Verbose '            Disconnect from Microsoft Graph'
-Disconnect-Graph
+$null = Disconnect-Graph
 
 #endregion Exercise 2: Manage the SharePoint Administrator role
 
