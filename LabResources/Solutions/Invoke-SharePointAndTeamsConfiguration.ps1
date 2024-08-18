@@ -307,7 +307,8 @@ if (($team | Get-TeamChannel).DisplayName -notcontains $displayname) {
         Write-Verbose `
         "            Create a shared channel with the name $displayname"
     $null = $team |
-        New-TeamChannel -DisplayName $displayname -MembershipType Shared
+        New-TeamChannel `
+            -DisplayName $displayname -MembershipType Shared -Owner $owner
 }
 
 $name = 'Patti Fernandez'
