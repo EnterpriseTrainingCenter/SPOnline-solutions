@@ -234,7 +234,7 @@ if ($sharePointAdmins.DisplayName -notcontains $displayname) {
     $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
     New-MgDirectoryRoleMemberByRef `
         -DirectoryRoleId $role.Id `
-        –OdataId "https://graph.microsoft.com/v1.0/users/$($mgUser.Id)"
+        -OdataId "https://graph.microsoft.com/v1.0/users/$($mgUser.Id)"
 }
 
 Write-Verbose '            Disconnect from Microsoft Graph'
