@@ -193,15 +193,16 @@ pwsh.exe -File $file $verbose
 
 $file = (
     Join-Path `
-        -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
+        -Path $PSScriptRoot -ChildPath 'Install-OnlineSharePointModule.ps1'
 )
 powershell.exe -File $file $verbose
 
 $file = (
     Join-Path `
-        -Path $PSScriptRoot -ChildPath 'Install-OnlineSharePointModule.ps1'
+        -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
 )
 powershell.exe -File $file $verbose
+
 
 #endregion Task 4: Install PowerShell modules
 
