@@ -193,18 +193,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
 )
-pwsh.exe -File $file $verbose
-
-<#
-    Install the Teams, Exchange, and Graph modules 
-    in the current environment again,
-    so scripts can run anyways.
-#>
-
-. (
-    Join-Path `
-        -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
-)
+powershell.exe -File $file $verbose
 
 $file = (
     Join-Path `

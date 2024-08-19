@@ -2,10 +2,7 @@
 param (
     [Parameter()]
     [switch]
-    $SkipDependencies,
-    [Parameter()]
-    [switch]
-    $NoRecursion
+    $SkipDependencies
 )
 
 #region Prerequisites
@@ -25,19 +22,19 @@ if ($module) {
     $module | Remove-Module -Force
 }
 
-if (-not $NoRecursion) {
-    Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
-}
+# Install from Windows PowerShell to make module available in both editions
 
-. (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
-
-if (-not $NoRecursion) {
+if ($PSEdition -ne 'Desktop') {
     $file = $MyInvocation.MyCommand.Path
     if ($MyInvocation.BoundParameters['Verbose'].IsPresent) {
         $verbose = '-Verbose'
     }
-    pwsh.exe -File $file -SkipDependencies -NoRecursion $verbose
+    powershell.exe -File $file -SkipDependencies -NoRecursion $verbose    
 }
+
+Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
+
+. (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
 Install-MyModule `
     -Name 'Microsoft.Graph.Beta' `
