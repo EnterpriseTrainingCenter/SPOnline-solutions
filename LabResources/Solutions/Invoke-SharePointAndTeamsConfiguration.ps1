@@ -126,6 +126,14 @@ Write-Host '    Exercise 1: Get started with PowerShell'
 
 Write-Host '        Task 1: Install WinGet'
 
+if ($PSEdition -eq 'Core') {
+    Import-Module -Name Appx -UseWindowsPowerShell
+}
+
+if ($PSEdition -eq 'Desktop') {
+    Import-Module -Name Appx
+}
+
 Install-AppxPackage `
     -Name 'Microsoft.VCLibs.140.00' `
     -Source 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx' `
