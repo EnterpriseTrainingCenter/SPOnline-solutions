@@ -1,3 +1,5 @@
+#Requires -RunAsAdministrator
+
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
 Install-MyModule `

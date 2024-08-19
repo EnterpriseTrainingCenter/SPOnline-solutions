@@ -12,6 +12,6 @@ function Install-MyModule {
 
     if (-not (Get-Module -Name $Name -ListAvailable)) {
         Write-Verbose "Install module $Description"
-        Install-Module -Name $Name -Scope CurrentUser -AllowClobber -Force
+        Install-Module -Name $Name -Scope AllUsers -AllowClobber -Force
     }
 }
