@@ -190,16 +190,21 @@ $file = (
 pwsh.exe -File $file $verbose
 
 $file = (
-    Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1'
+    Join-Path `
+        -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
 )
 pwsh.exe -File $file $verbose
 
 <#
-    Install the Teams and Graph modules in the current environment again,
+    Install the Teams, Exchange, and Graph modules 
+    in the current environment again,
     so scripts can run anyways.
 #>
 
-. (Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1')
+. (
+    Join-Path `
+        -Path $PSScriptRoot -ChildPath 'Install-TeamsExchangeAndGraphModule.ps1'
+)
 
 $file = (
     Join-Path `
