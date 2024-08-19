@@ -29,10 +29,6 @@ Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
 
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
-Install-MyModule `
-    -Name 'Microsoft.Graph.Beta' `
-    -Description 'Microsoft Graph Beta PowerShell module'
-
 if (-not $NoRecursion) {
     $file = $MyInvocation.MyCommand.Path
     if ($MyInvocation.BoundParameters['Verbose'].IsPresent) {
@@ -40,4 +36,9 @@ if (-not $NoRecursion) {
     }
     pwsh.exe -File $file -SkipDependencies -NoRecursion $verbose
 }
+
+Install-MyModule `
+    -Name 'Microsoft.Graph.Beta' `
+    -Description 'Microsoft Graph Beta PowerShell module'
+
 #endregion Practice: Install Microsoft Graph Beta PowerShell module
