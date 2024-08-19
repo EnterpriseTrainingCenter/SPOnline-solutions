@@ -182,12 +182,12 @@ Write-Host '        Task 4: Install PowerShell modules'
 $file = (
     Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowerShell.ps1'
 )
-pwsh.exe -File $file -Args "-Verbose:$Verbose"
+pwsh.exe -File $file -Verbose:$Verbose
 
 $file = (
     Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1'
 )
-pwsh.exe -File $file -Args "-Verbose:$Verbose"
+pwsh.exe -File $file -Verbose:$Verbose
 
 <#
     Install the Teams and Graph modules in the current environment again,
@@ -200,7 +200,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Install-OnlineSharePointModule.ps1'
 )
-powershell.exe -File $file -Args "-Verbose:$Verbose"
+powershell.exe -File $file -Verbose:$Verbose
 
 #endregion Task 4: Install PowerShell modules
 
