@@ -118,6 +118,11 @@ function Install-AppxPackage {
 
 Write-Host 'Lab: Get started with SharePoint'
 
+if ($MyInvocation.BoundParameters['Verbose'].IsPresent) {
+    $verbose = '-Verbose'
+}
+
+
 #region Exercise 1: Get started with PowerShell
 
 Write-Host '    Exercise 1: Get started with PowerShell'
@@ -182,12 +187,12 @@ Write-Host '        Task 4: Install PowerShell modules'
 $file = (
     Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowerShell.ps1'
 )
-pwsh.exe -File $file -Verbose:$Verbose
+pwsh.exe -File $file $verbose
 
 $file = (
     Join-Path -Path $PSScriptRoot -ChildPath 'Install-TeamsAndGraphModule.ps1'
 )
-pwsh.exe -File $file -Verbose:$Verbose
+pwsh.exe -File $file $verbose
 
 <#
     Install the Teams and Graph modules in the current environment again,
@@ -200,7 +205,7 @@ $file = (
     Join-Path `
         -Path $PSScriptRoot -ChildPath 'Install-OnlineSharePointModule.ps1'
 )
-powershell.exe -File $file -Verbose:$Verbose
+powershell.exe -File $file $verbose
 
 #endregion Task 4: Install PowerShell modules
 
@@ -240,7 +245,7 @@ $sharePointAdmins = $mgDirectoryRoleMember | ForEach-Object { Get-MgUser -UserId
 
 #region Task 1: Assign the SharePoint Administrator role
 
-Write-Verbose '        Task 1: Assign the SharePoint Administrator role'
+Write-Host '        Task 1: Assign the SharePoint Administrator role'
 
 $displayname = 'Lynne Robbins'
 if ($sharePointAdmins.DisplayName -notcontains $displayname) {
