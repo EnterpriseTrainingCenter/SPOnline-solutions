@@ -26,7 +26,7 @@ if ($module) {
 
 # Install from Windows PowerShell to make module available in both editions
 
-if ($psEditor -eq 'Desktop') {
+if ($PSEdition -eq 'Desktop') {
     Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
     
     . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
