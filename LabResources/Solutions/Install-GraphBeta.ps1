@@ -22,7 +22,7 @@ Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
 Install-MyModule `
-    -Name 'Microsoft Graph Beta' `
+    -Name 'Microsoft.Graph.Beta' `
     -Description 'Microsoft Graph Beta PowerShell module'
 
 pwsh.exe -File $MyInvocation.PSCommandPath -Args "-Verbose:$Verbose", '-SkipDependencies'
