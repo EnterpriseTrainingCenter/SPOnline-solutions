@@ -24,20 +24,23 @@ if ($module) {
 
 # Install from Windows PowerShell to make module available in both editions
 
+if ($psEditor -eq 'Desktop') {
+    Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
+    
+    . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
+    
+    Install-MyModule `
+        -Name 'Microsoft.Graph.Beta' `
+        -Description 'Microsoft Graph Beta PowerShell module'
+    
+}
+
 if ($PSEdition -ne 'Desktop') {
     $file = $MyInvocation.MyCommand.Path
     if ($MyInvocation.BoundParameters['Verbose'].IsPresent) {
         $verbose = '-Verbose'
     }
-    powershell.exe -File $file -SkipDependencies -NoRecursion $verbose    
+    powershell.exe -File $file -SkipDependencies $verbose
 }
-
-Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
-
-. (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
-
-Install-MyModule `
-    -Name 'Microsoft.Graph.Beta' `
-    -Description 'Microsoft Graph Beta PowerShell module'
 
 #endregion Practice: Install Microsoft Graph Beta PowerShell module
