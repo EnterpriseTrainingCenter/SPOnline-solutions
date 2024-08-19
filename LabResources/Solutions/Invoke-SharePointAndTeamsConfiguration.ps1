@@ -346,11 +346,11 @@ if (
 
 #endregion Task 4: Create a standard channel
 
-Write-Verbose '        Disconnect from Microsoft Teams'
+Write-Verbose 'Disconnect from Microsoft Teams'
 
 #endregion Exercise 5: Explore SharePoint integration with Teams
 
-Write-Verbose '    Disconnect from Microsoft Graph'
+Write-Verbose 'Disconnect from Microsoft Graph'
 $null = Disconnect-Graph
 
 #endregion Lab: Get started with SharePoint
