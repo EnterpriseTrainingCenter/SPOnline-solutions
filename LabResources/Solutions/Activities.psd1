@@ -17,5 +17,12 @@
             Script = 'Install-VSCode.ps1'
             DependsOn = 'GettingStarted'
         }
+        @{
+            ID = 'InstallGraphBeta'
+            Displayname = `
+                'Practice: Install Microsoft Graph Beta PowerShell module'
+            Script = 'Install-GraphBeta.ps1'   
+            DependsOn = 'GettingStarted'
+        }
     )
 }
