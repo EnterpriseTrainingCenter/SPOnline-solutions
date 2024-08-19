@@ -25,7 +25,9 @@ if ($module) {
     $module | Remove-Module -Force
 }
 
-Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
+if (-not $NoRecursion) {
+    Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
+}
 
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
