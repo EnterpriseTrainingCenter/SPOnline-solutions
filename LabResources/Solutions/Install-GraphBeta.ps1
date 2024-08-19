@@ -20,6 +20,11 @@ if (-not $SkipDependencies) {
 
 #region Practice: Install Microsoft Graph Beta PowerShell module
 
+$module = Get-Module -Name Microsoft.Graph.*
+if ($module) {
+    $module | Remove-Module -Force
+}
+
 Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
 
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
