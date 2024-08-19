@@ -26,7 +26,7 @@ if (-not (
         $PSItem.DisplayName -eq 'Microsoft Visual Studio Code (User)' 
     }
 )) {
-    Write-Verbose '            Download and install Microsoft Visual Studio Code'
+    Write-Verbose 'Download and install Microsoft Visual Studio Code'
     winget install --id XP9KHM4BK9FZ7Q --accept-package-agreements --accept-source-agreements --force
 }
 

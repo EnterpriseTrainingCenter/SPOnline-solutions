@@ -101,12 +101,12 @@ function Install-AppxPackage {
         $destination = "~\Downloads\$Filename"
     
         if (-not (Test-Path -Path $destination)) {
-            Write-Verbose "            Download package $Description"
+            Write-Verbose "Download package $Description"
     
             Start-BitsTransfer -Source $Source -Destination $destination
         }
     
-        Write-Verbose "            Install package $Description"
+        Write-Verbose "Install package $Description"
     
         Add-AppxPackage -Path $destination
     }
@@ -164,7 +164,7 @@ Install-AppxPackage `
 Write-Host '        Task 2: Install PowerShell'
 
 if (-not (Get-AppxPackage -Name 'Microsoft.PowerShell')) {
-    Write-Verbose '            Download and install PowerShell'
+    Write-Verbose 'Download and install PowerShell'
     winget install --id 9MZ1SNWT0N5D --accept-package-agreements --accept-source-agreements --force
 }
 
@@ -175,7 +175,7 @@ if (-not (Get-AppxPackage -Name 'Microsoft.PowerShell')) {
 Write-Host '        Task 3: Install Windows Terminal'
 
 if (-not (Get-AppxPackage -Name 'Microsoft.WindowsTerminal')) {
-    Write-Verbose '            Download and install Windows Terminal'    
+    Write-Verbose 'Download and install Windows Terminal'    
     winget install --id 9N0DX20HK701 --accept-package-agreements --accept-source-agreements --force
 }
 #endregion Task 3: Install Windows Terminal
@@ -224,17 +224,17 @@ Write-Host '    Exercise 2: Manage the SharePoint Administrator role'
 
 Write-Host '        Task 2: Verify the SharePoint Administrator role holders'
 
-Write-Verbose '            Sign in to Microsoft Graph'
+Write-Verbose 'Sign in to Microsoft Graph'
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
 Connect-MgGraph -Scopes 'RoleManagement.ReadWrite.Directory' -NoWelcome
 
-Write-Verbose '            Get the SharePoint Administrator role'
+Write-Verbose 'Get the SharePoint Administrator role'
 $roleName = 'SharePoint Administrator'
 $role = Get-MgDirectoryRole -Filter "Displayname eq '$roleName'"
 
 if ($null -eq $role) {
-    Write-Verbose '            Add role from template'
+    Write-Verbose 'Add role from template'
     $roleTemplate = Get-MgDirectoryRoleTemplate |
         Where-Object { $PSItem.Displayname -eq $roleName }
     New-MgDirectoryRole `
@@ -242,7 +242,7 @@ if ($null -eq $role) {
     $role = Get-MgDirectoryRole -Filter "Displayname eq '$roleName'"
 }
 
-Write-Verbose '            Get the role members and store them in a variable'
+Write-Verbose 'Get the role members and store them in a variable'
 $mgDirectoryRoleMember = Get-MgDirectoryRoleMember -DirectoryRoleId $role.Id
 $sharePointAdmins = $mgDirectoryRoleMember | ForEach-Object { Get-MgUser -UserId $PSItem.Id }
 
@@ -258,7 +258,7 @@ if ($sharePointAdmins.DisplayName -notcontains $displayname) {
         '            Find and store the user Lynne Robbins in a variable'
     $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
 
-    Write-Verbose '            Add the stored user to the role'
+    Write-Verbose 'Add the stored user to the role'
     New-MgDirectoryRoleMemberByRef `
         -DirectoryRoleId $role.Id `
         -OdataId "https://graph.microsoft.com/v1.0/users/$($mgUser.Id)"
@@ -276,7 +276,7 @@ Write-Host '    Exercise 5: Explore SharePoint integration with Teams'
 
 Write-Host '        Task 1: Create a new team'
 
-Write-Verbose '            Sign in to Microsoft Teams'
+Write-Verbose 'Sign in to Microsoft Teams'
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
 $null = Connect-MicrosoftTeams
@@ -286,7 +286,7 @@ $ownerDisplayname = 'Lynne Robbins'
 $owner = (Get-MgUser -Filter "Displayname eq '$ownerDisplayname'").UserPrincipalName
 $team = Get-Team -DisplayName $displayname
 if (-not $team) {
-    Write-Verbose "            Create a team with the name $displayname"
+    Write-Verbose "Create a team with the name $displayname"
     $ownerDisplayname = 'Lynne Robbins'
     $owner = (Get-MgUser -Filter "Displayname eq '$ownerDisplayname'").UserPrincipalName
     $team = New-Team `
@@ -297,7 +297,7 @@ if (-not $team) {
 
 $displayname = 'Megan Bowen'
 if (($team | Get-TeamUser).Name -notcontains $displayname) {
-    Write-Verbose "            Add $displayname to the team"
+    Write-Verbose "Add $displayname to the team"
     $mgUser = Get-MgUser -Filter "Displayname eq '$displayname'"
     $team | Add-TeamUser -User $mgUser.UserPrincipalName
 }
@@ -339,7 +339,7 @@ if (
         $team | Get-TeamChannelUser -DisplayName $displayname
     ).Name -notcontains $name
 ) {
-    Write-Verbose "            Add $name to the shared channel"
+    Write-Verbose "Add $name to the shared channel"
     $user = (Get-MgUser -Filter "Displayname eq '$name'").UserPrincipalName
     $team | Add-TeamChannelUser -DisplayName $displayname -User $user
 }
