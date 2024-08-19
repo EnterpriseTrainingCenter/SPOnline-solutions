@@ -2,7 +2,10 @@
 param (
     [Parameter()]
     [switch]
-    $SkipDependencies
+    $SkipDependencies,
+    [Parameter()]
+    [switch]
+    $NoRecursion
 )
 
 #region Prerequisites
@@ -21,11 +24,15 @@ Write-Host 'Practice: Install Microsoft Graph Beta PowerShell module'
 
 . (Join-Path -Path $PSScriptRoot -ChildPath 'Install-MyModule.ps1')
 
-Get-Module 'Microsoft.Graph.*' | Remove-Module -Force
 Install-MyModule `
     -Name 'Microsoft.Graph.Beta' `
     -Description 'Microsoft Graph Beta PowerShell module'
 
-pwsh.exe -File $MyInvocation.PSCommandPath -Verbose:$Verbose -SkipDependencies
-
+if (-not $NoRecursion) {
+    $file = $MyInvocation.MyCommand.Path
+    if ($MyInvocation.BoundParameters['Verbose'].IsPresent) {
+        $verbose = '-Verbose'
+    }
+    pwsh.exe -File $file -SkipDependencies -NoRecursion $verbose
+}
 #endregion Practice: Install Microsoft Graph Beta PowerShell module
