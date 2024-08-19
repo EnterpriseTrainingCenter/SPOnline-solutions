@@ -184,7 +184,7 @@ if (-not (Get-AppxPackage -Name 'Microsoft.WindowsTerminal')) {
 
 Write-Host '        Task 4: Install PowerShell modules'
 
-Remove-Module -Name PackageManagement
+Remove-Module -Name PackageManagement -Force
 
 $file = (
     Join-Path -Path $PSScriptRoot -ChildPath 'Install-PnPPowerShell.ps1'
