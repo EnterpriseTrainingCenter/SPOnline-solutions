@@ -21,7 +21,7 @@
         @{
             ID = 'SiteAdministration'
             Displayname = 'Lab: Site administration'
-            Script = 'New-Sites'
+            Script = 'New-Sites.ps1'
             DependsOn = 'GettingStarted'
         }
     )
