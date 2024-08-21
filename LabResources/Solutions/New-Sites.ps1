@@ -167,12 +167,12 @@ Write-Warning `
 Connect-ExchangeOnline
 
 $unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
-$links = $unifiedGroupLinks -notin @($owner)
+$links = $unifiedGroupLinks | Where-Object {$PSItem -notin @($owner) }
 if ($links) {
     Write-Verbose 'Remove owners'
     Remove-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
 }
-$links = @($owner) -notin $unifiedGroupLinks
+$links = @($owner) | Where-Object { $PSItem -notin $unifiedGroupLinks }
 if ($links) {
     Write-Verbose 'Add owners'
     Add-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
