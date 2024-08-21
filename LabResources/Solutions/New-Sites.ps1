@@ -150,20 +150,14 @@ Connect-SPOService -Url "https://$tenantName-admin.sharepoint.com"
 $sPOSite = New-Site `
     -Url "https://$tenantName.sharepoint.com/sites/$($sites.ITInternal.Url)" `
     -Template 'STS#3' `
-    -Owner $owner `
+    -Owner -Owner "admin@$($initialDomain.Id)" `
     -Title $sites.ITInternal.Title
 
 $alias = 'IT'
 if ($sPOSite.GroupId.Guid -eq '00000000-0000-0000-0000-000000000000') {
-    Write-Verbose 'Take ownership of site'
-    Set-SPOSite -Identity $sPOSite.Url -Owner "admin@$($initialDomain.Id)"
-    
     Write-Verbose 'Connect site with Microsoft 365 group'
     Set-SPOSiteOffice365Group `
         -Site $sPOSite.Url -DisplayName $sites.ITInternal.Title -Alias $alias
-    
-    Write-Verbose 'Give ownership back'
-    Set-SPOSite -Identity $sPOSite.Url -Owner $owner | Add
 }
 
 Write-Verbose 'Sign in to Exchange Online'
@@ -171,6 +165,18 @@ Import-Module ExchangeOnlineManagement
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
 Connect-ExchangeOnline
+
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
+$links = $unifiedGroupLinks -notin @($owner)
+if ($links) {
+    Write-Verbose 'Remove owners'
+    Remove-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
+}
+$links = @($owner) -notin $unifiedGroupLinks
+if ($links) {
+    Write-Verbose 'Add owners'
+    Add-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
+}
 
 Write-Verbose 'Build a list of users to be added to the group'
 $members = @(
@@ -194,7 +200,7 @@ $links = $members |
     Where-Object { $PSItem -notin $unifiedGroupLinks.WindowsLiveId }
 if ($links) {
     Write-Verbose 'Add the users to the group'
-    Add-UnifiedGroupLinks -Identity $alias -Links $links -LinkType Members
+    Add-UnifiedGroupLinks -Identity $alias -LinkType Members -Links $links
 }
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
@@ -520,9 +526,10 @@ $sPOSite | Set-SPOSite -LockState NoAccess
 Write-Host '        Task 5: Make a site read-only'
 
 Write-Verbose 'Make the OneDrive deployment project site read-only'
-$spoSite = Get-SPOSite -Identity `
-    "https://$tenantName.sharepoint.com/sites/$($sites.Project1Drive.Url)"
-$spoSite | Set-SPOSite -LockState ReadOnly
+Set-SPOSite `
+    -Identity `
+        "https://$tenantName.sharepoint.com/sites/$($sites.Project1Drive.Url)" `
+        -LockState ReadOnly
 
 #endregion Task 5: Make a site read-only
 #endregion Exercise 8: Manage lock states
