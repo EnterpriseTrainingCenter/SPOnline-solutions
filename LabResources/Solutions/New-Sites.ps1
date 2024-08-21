@@ -295,7 +295,7 @@ Write-Host '    Task 1: Verify that users can create Microsoft 365 groups'
 
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
-Connect-MgGraph -Scopes Domain.Read.All
+# Connect-MgGraph -Scopes Domain.Read.All
 
 Write-Verbose 'Get user Joni Sherman'
 Import-Module Microsoft.Graph.Users
