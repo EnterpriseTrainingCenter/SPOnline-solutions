@@ -153,17 +153,47 @@ $sPOSite = New-Site `
     -Owner $owner `
     -Title $sites.ITInternal.Title
 
+$alias = 'IT'
 if ($sPOSite.GroupId.Guid -eq '00000000-0000-0000-0000-000000000000') {
     Write-Verbose 'Take ownership of site'
     Set-SPOSite -Identity $sPOSite.Url -Owner "admin@$($initialDomain.Id)"
     
     Write-Verbose 'Connect site with Microsoft 365 group'
     Set-SPOSiteOffice365Group `
-        -Site $sPOSite.Url -DisplayName $sites.ITInternal.Title -Alias 'IT'
+        -Site $sPOSite.Url -DisplayName $sites.ITInternal.Title -Alias $alias
     
     Write-Verbose 'Give ownership back'
-    Set-SPOSite -Identity $sPOSite.Url -Owner $owner
+    Set-SPOSite -Identity $sPOSite.Url -Owner $owner | Add
 }
+
+Write-Verbose 'Sign in to Exchange Online'
+Import-Module ExchangeOnlineManagement
+Write-Warning `
+    'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
+Connect-ExchangeOnline
+
+Write-Verbose 'Build a list of users to be added to the group'
+$members = @(
+    'Miriam Graham'
+    'Alex Wilber'
+    'Christie Cline'
+    'Isaiah Langer'
+    'Megan Bowen'
+    'Adele Vance'
+    'Debra Berger'
+    'Nestor Wilke'
+    'Lee Gu'
+    'Joni Sherman'
+    'Pradeep Gupta'
+) | ForEach-Object { 
+    (Get-MgUser -Filter "Displayname eq '$PSItem'").UserPrincipalName 
+}
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
+
+Write-Verbose 'Add the users to the group'
+$links = $members | 
+    Where-Object { $PSItem -notin $unifiedGroupLinks.WindowsLiveId }
+Add-UnifiedGroupLinks -Identity $alias -Links $links -LinkType Members
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
 
@@ -293,19 +323,13 @@ Write-Host '    Exercise 3: Manage site creation'
 
 Write-Host '    Task 1: Verify that users can create Microsoft 365 groups'
 
-Write-Warning `
-    'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
+# Write-Warning `
+#     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
 # Connect-MgGraph -Scopes Domain.Read.All
 
 Write-Verbose 'Get user Joni Sherman'
 Import-Module Microsoft.Graph.Users
 $owner = (Get-MgUser -Filter "Displayname eq 'Joni Sherman'").UserPrincipalName
-
-Import-Module ExchangeOnlineManagement
-Write-Warning `
-    'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
-Connect-ExchangeOnline
-
 
 $jonisGroupDisplayName = 'Jonis''s group'
 if (-not (
@@ -328,7 +352,7 @@ Write-Host `
 
 Write-Verbose 'Disconnect from graph and remove all modules from memory'
 # Disconnect-Graph
-# Get-Module -Name Microsoft.Graph.* | Remove-Module -Force
+Get-Module -Name Microsoft.Graph.* | Remove-Module -Force
 
 # Write-Verbose 'Connect to Graph Beta'
 Import-Module Microsoft.Graph.Beta.Identity.DirectoryManagement
@@ -389,7 +413,7 @@ Update-MgBetaDirectorySetting `
 
 # Write-Verbose 'Disconnect from Graph and remove beta modules'
 # $null = Disconnect-Graph
-# Get-Module -Name Microsoft.Graph.Beta.* | Remove-Module -Force
+Get-Module -Name Microsoft.Graph.Beta.* | Remove-Module -Force
 
 # (Get-MgBetaDirectorySetting -DirectorySettingId $settingsObjectID).Values
 
