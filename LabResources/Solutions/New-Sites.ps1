@@ -150,7 +150,7 @@ Connect-SPOService -Url "https://$tenantName-admin.sharepoint.com"
 $sPOSite = New-Site `
     -Url "https://$tenantName.sharepoint.com/sites/$($sites.ITInternal.Url)" `
     -Template 'STS#3' `
-    -Owner -Owner "admin@$($initialDomain.Id)" `
+    -Owner "admin@$($initialDomain.Id)" `
     -Title $sites.ITInternal.Title
 
 $alias = 'IT'
