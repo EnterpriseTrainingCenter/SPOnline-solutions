@@ -170,7 +170,6 @@ Connect-ExchangeOnline
 
 Write-Verbose 'Build a list of users to be added to the group'
 $members = @(
-    $owner
     'Miriam Graham'
     'Alex Wilber'
     'Christie Cline'
@@ -185,6 +184,8 @@ $members = @(
 ) | ForEach-Object { 
     (Get-MgUser -Filter "Displayname eq '$PSItem'").UserPrincipalName 
 }
+$members += $owner
+
 
 # Add members
 $unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
@@ -220,8 +221,6 @@ if ($links) {
     Remove-UnifiedGroupLinks `
         -Identity $alias -LinkType Members -Links $links -Confirm:$false
 }
-
-
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
 
