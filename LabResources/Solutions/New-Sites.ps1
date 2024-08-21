@@ -323,7 +323,7 @@ Write-Host '    Exercise 3: Manage site creation'
 
 #region Task 1: Verify that users can create Microsoft 365 groups
 
-Write-Host '    Task 1: Verify that users can create Microsoft 365 groups'
+Write-Host '        Task 1: Verify that users can create Microsoft 365 groups'
 
 Write-Verbose 'Get user Joni Sherman'
 Import-Module Microsoft.Graph.Users
@@ -520,7 +520,8 @@ $sPOSite | Set-SPOSite -LockState NoAccess
 Write-Host '        Task 5: Make a site read-only'
 
 Write-Verbose 'Make the OneDrive deployment project site read-only'
-$spoSite = Get-SPOSite -Identity $sites.Project1Drive.Url
+$spoSite = Get-SPOSite -Identity `
+    "https://$tenantName.sharepoint.com/sites/$sites.Project1Drive.Url"
 $spoSite | Set-SPOSite -LockState ReadOnly
 
 #endregion Task 5: Make a site read-only
@@ -529,4 +530,3 @@ $spoSite | Set-SPOSite -LockState ReadOnly
 Write-Verbose 'Disconnect from Exchange, SharePoint, and Microsoft Graph'
 Disconnect-ExchangeOnline -Confirm:$false
 Disconnect-SPOService
-$null = Disconnect-MgGraph
