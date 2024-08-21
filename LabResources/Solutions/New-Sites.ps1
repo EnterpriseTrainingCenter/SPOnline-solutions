@@ -74,11 +74,11 @@ function New-Site {
             $sPOSite = Get-SPOSite -Identity $Url
     }
 
-    # Configure site
+    # Configure owner
 
-    if ($sPOSite.Title -ne $Title -or $sPOSite.Owner -ne $Owner) {
-        Write-Verbose "Set title to $Title and owner to $Owner for site $Url"
-        Set-SPOSite -Identity $Url -Title $Title -Owner $Owner
+    if ($sPOSite.Owner -ne $Owner) {
+        Write-Verbose "Set owner to $Owner for site $Url"
+        Set-SPOSite -Identity $Url -Owner $Owner
     }
 
     return $sPOSite
