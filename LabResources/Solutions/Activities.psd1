@@ -3,7 +3,7 @@
         @{
             ID = 'GettingStarted'
             DisplayName = 'Lab: Get started with SharePoint'
-            Script = 'Invoke-SharePointAndTeamsConfiguration.ps1'
+            Script = 'Start-SharePointAndTeamsConfiguration.ps1'
         }
         @{
             ID = 'InstallVSCode'
