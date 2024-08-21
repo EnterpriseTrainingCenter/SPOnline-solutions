@@ -6,12 +6,6 @@
             Script = 'Invoke-SharePointAndTeamsConfiguration.ps1'
         }
         @{
-            ID = ''
-            DisplayName = ''
-            Script = ''
-            DependsOn = ''
-        }
-        @{
             ID = 'InstallVSCode'
             DisplayName = 'Practice: Install Visual Studio Code'
             Script = 'Install-VSCode.ps1'
@@ -21,7 +15,13 @@
             ID = 'InstallGraphBeta'
             Displayname = `
                 'Practice: Install Microsoft Graph Beta PowerShell module'
-            Script = 'Install-GraphBeta.ps1'   
+            Script = 'Install-GraphBeta.ps1'
+            DependsOn = 'GettingStarted'
+        }
+        @{
+            ID = 'SiteAdministration'
+            Displayname = 'Lab: Site administration'
+            Script = 'New-Sites'
             DependsOn = 'GettingStarted'
         }
     )
