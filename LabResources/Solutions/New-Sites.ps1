@@ -169,7 +169,7 @@ if ($sPOSite.GroupId.Guid -eq '00000000-0000-0000-0000-000000000000') {
 
 #region Task 2: Create team sites without a Microsoft 365 group
 
-Write-Host '        Task 2: Create tem sites without a Microsoft 365 group'
+Write-Host '        Task 2: Create team sites without a Microsoft 365 group'
 
 $site = $sites.Project1Drive
 $null = New-Site `
@@ -308,9 +308,10 @@ Connect-ExchangeOnline
 
 
 $jonisGroupDisplayName = 'Jonis''s group'
-
 if (-not (
-    Get-UnifiedGroup -Filter "Displayname -eq '$jonisGroupDisplayName'"
+    Get-UnifiedGroup -Filter "Displayname -eq '$(
+        $jonisGroupDisplayName -replace '''', ''''''
+    )'"
 )) {
     Write-Verbose 'Create Joni''s group'
     New-UnifiedGroup `
@@ -326,14 +327,14 @@ Write-Host `
     '        Task 2: Limit the users that can create Microsoft 365 groups'
 
 Write-Verbose 'Disconnect from graph and remove all modules from memory'
-Disconnect-Graph
-Get-Module -Name Microsoft.Graph.* | Remove-Module -Force
+# Disconnect-Graph
+# Get-Module -Name Microsoft.Graph.* | Remove-Module -Force
 
-Write-Verbose 'Connect to Graph Beta'
+# Write-Verbose 'Connect to Graph Beta'
 Import-Module Microsoft.Graph.Beta.Identity.DirectoryManagement
 Import-Module Microsoft.Graph.Beta.Groups
 
-Connect-MgGraph -Scopes "Directory.ReadWrite.All", "Group.Read.All"
+# Connect-MgGraph -Scopes "Directory.ReadWrite.All", "Group.Read.All"
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
 
@@ -386,9 +387,9 @@ Write-Verbose 'Update the directory settings object'
 Update-MgBetaDirectorySetting `
     -DirectorySettingId $settingsObjectID -BodyParameter $params
 
-Write-Verbose 'Disconnect from Graph and remove beta modules'
-$null = Disconnect-Graph
-Get-Module -Name Microsoft.Graph.Beta.* | Remove-Module -Force
+# Write-Verbose 'Disconnect from Graph and remove beta modules'
+# $null = Disconnect-Graph
+# Get-Module -Name Microsoft.Graph.Beta.* | Remove-Module -Force
 
 # (Get-MgBetaDirectorySetting -DirectorySettingId $settingsObjectID).Values
 
@@ -422,8 +423,7 @@ Write-Host '    Exercise 4: Manage storage limits'
 
 #region Task 1: Change the site storage limits to manual
 
-Write-Warning 
-@'
+Write-Warning @'
     This task cannot be accomplished using PowerShell at the moment.
     Please refer to the lab guide to perform this task manually.
 '@
@@ -505,6 +505,7 @@ $spoSite | Set-SPOSite -LockState ReadOnly
 #endregion Task 5: Make a site read-only
 #endregion Exercise 8: Manage lock states
 
-Write-Verbose 'Disconnect from SharePoint and Microsoft Graph'
+Write-Verbose 'Disconnect from Exchange, SharePoint, and Microsoft Graph'
+Disconnect-ExchangeOnline
 Disconnect-SPOService
 $null = Disconnect-Graph
