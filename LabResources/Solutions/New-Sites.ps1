@@ -445,8 +445,8 @@ Write-Host '    Exercise 4: Manage storage limits'
 #region Task 1: Change the site storage limits to manual
 
 Write-Warning @'
-    This task cannot be accomplished using PowerShell at the moment.
-    Please refer to the lab guide to perform this task manually.
+This task cannot be accomplished using PowerShell at the moment.
+Please refer to the lab guide to perform this task manually.
 '@
 
 #endregion Task 1: Change the site storage limits to manual
@@ -521,7 +521,7 @@ Write-Host '        Task 5: Make a site read-only'
 
 Write-Verbose 'Make the OneDrive deployment project site read-only'
 $spoSite = Get-SPOSite -Identity `
-    "https://$tenantName.sharepoint.com/sites/$sites.Project1Drive.Url"
+    "https://$tenantName.sharepoint.com/sites/$($sites.Project1Drive.Url)"
 $spoSite | Set-SPOSite -LockState ReadOnly
 
 #endregion Task 5: Make a site read-only
