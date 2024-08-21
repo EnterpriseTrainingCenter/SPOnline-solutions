@@ -166,20 +166,11 @@ Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin.'
 Connect-ExchangeOnline
 
-$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
-$links = $unifiedGroupLinks | Where-Object {$PSItem -notin @($owner) }
-if ($links) {
-    Write-Verbose 'Remove owners'
-    Remove-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
-}
-$links = @($owner) | Where-Object { $PSItem -notin $unifiedGroupLinks }
-if ($links) {
-    Write-Verbose 'Add owners'
-    Add-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
-}
+# Manage members including owners
 
 Write-Verbose 'Build a list of users to be added to the group'
 $members = @(
+    $owner
     'Miriam Graham'
     'Alex Wilber'
     'Christie Cline'
@@ -196,12 +187,41 @@ $members = @(
 }
 $unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
 
+# Add members
 $links = $members | 
     Where-Object { $PSItem -notin $unifiedGroupLinks.WindowsLiveId }
 if ($links) {
     Write-Verbose 'Add the users to the group'
     Add-UnifiedGroupLinks -Identity $alias -LinkType Members -Links $links
 }
+
+# Remove members
+$links = $unifiedGroupLinks.WindowsLiveId |
+    Where-Object { $PSItem -notin $members }
+
+if ($links) {
+    Remove-UnifiedGroupLinks `
+        -Identity $alias -LinkType Members -Links $links -Confirm:$false
+}
+
+# Manage owners
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
+
+# Add owners
+$links = @($owner) | Where-Object { $PSItem -notin $unifiedGroupLinks }
+if ($links) {
+    Write-Verbose 'Add owners'
+    Add-UnifiedGroupLinks -Identity $alias -LinkType Owners -Links $links
+}
+
+# Remove owners
+$links = $unifiedGroupLinks | Where-Object {$PSItem -notin @($owner) }
+if ($links) {
+    Write-Verbose 'Remove owners'
+    Remove-UnifiedGroupLinks `
+        -Identity $alias -LinkType Owners -Links $links -Confirm:$false
+}
+
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
 
