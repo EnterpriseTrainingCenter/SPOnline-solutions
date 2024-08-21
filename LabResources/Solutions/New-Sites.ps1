@@ -185,9 +185,9 @@ $members = @(
 ) | ForEach-Object { 
     (Get-MgUser -Filter "Displayname eq '$PSItem'").UserPrincipalName 
 }
-$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
 
 # Add members
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
 $links = $members | 
     Where-Object { $PSItem -notin $unifiedGroupLinks.WindowsLiveId }
 if ($links) {
@@ -195,19 +195,8 @@ if ($links) {
     Add-UnifiedGroupLinks -Identity $alias -LinkType Members -Links $links
 }
 
-# Remove members
-$links = $unifiedGroupLinks.WindowsLiveId |
-    Where-Object { $PSItem -notin $members }
-
-if ($links) {
-    Remove-UnifiedGroupLinks `
-        -Identity $alias -LinkType Members -Links $links -Confirm:$false
-}
-
-# Manage owners
-$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
-
 # Add owners
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
 $links = @($owner) | Where-Object { $PSItem -notin $unifiedGroupLinks }
 if ($links) {
     Write-Verbose 'Add owners'
@@ -221,6 +210,17 @@ if ($links) {
     Remove-UnifiedGroupLinks `
         -Identity $alias -LinkType Owners -Links $links -Confirm:$false
 }
+
+# Remove members
+$unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Owners
+$links = $unifiedGroupLinks.WindowsLiveId |
+    Where-Object { $PSItem -notin $members }
+
+if ($links) {
+    Remove-UnifiedGroupLinks `
+        -Identity $alias -LinkType Members -Links $links -Confirm:$false
+}
+
 
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
