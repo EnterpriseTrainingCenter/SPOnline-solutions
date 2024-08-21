@@ -78,7 +78,7 @@ function New-Site {
 
     if ($sPOSite.Title -ne $Title -or $sPOSite.Owner -ne $Owner) {
         Write-Verbose "Set title to $Title and owner to $Owner for site $Url"
-        Set-SPOSite -Title $Title -Owner $Owner
+        Set-SPOSite -Identity $Url -Title $Title -Owner $Owner
     }
 
     return $sPOSite
