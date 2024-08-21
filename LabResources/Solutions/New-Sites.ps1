@@ -190,10 +190,12 @@ $members = @(
 }
 $unifiedGroupLinks = Get-UnifiedGroupLinks -Identity $alias -LinkType Members
 
-Write-Verbose 'Add the users to the group'
 $links = $members | 
     Where-Object { $PSItem -notin $unifiedGroupLinks.WindowsLiveId }
-Add-UnifiedGroupLinks -Identity $alias -Links $links -LinkType Members
+if ($links) {
+    Write-Verbose 'Add the users to the group'
+    Add-UnifiedGroupLinks -Identity $alias -Links $links -LinkType Members
+}
 
 #endregion Task 1: Create a team site with a Microsoft 365 Group
 
@@ -323,10 +325,6 @@ Write-Host '    Exercise 3: Manage site creation'
 
 Write-Host '    Task 1: Verify that users can create Microsoft 365 groups'
 
-# Write-Warning `
-#     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
-# Connect-MgGraph -Scopes Domain.Read.All
-
 Write-Verbose 'Get user Joni Sherman'
 Import-Module Microsoft.Graph.Users
 $owner = (Get-MgUser -Filter "Displayname eq 'Joni Sherman'").UserPrincipalName
@@ -351,17 +349,16 @@ Write-Host `
     '        Task 2: Limit the users that can create Microsoft 365 groups'
 
 Write-Verbose 'Disconnect from graph and remove all modules from memory'
-# Disconnect-Graph
+$null = Disconnect-MgGraph
 Get-Module -Name Microsoft.Graph.* | Remove-Module -Force
 
 # Write-Verbose 'Connect to Graph Beta'
 Import-Module Microsoft.Graph.Beta.Identity.DirectoryManagement
 Import-Module Microsoft.Graph.Beta.Groups
 
-# Connect-MgGraph -Scopes "Directory.ReadWrite.All", "Group.Read.All"
+Connect-MgGraph -Scopes "Directory.ReadWrite.All", "Group.Read.All"
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
-
 
 $groupName = "sg-IT"
 $allowGroupCreation = "False"
@@ -411,8 +408,8 @@ Write-Verbose 'Update the directory settings object'
 Update-MgBetaDirectorySetting `
     -DirectorySettingId $settingsObjectID -BodyParameter $params
 
-# Write-Verbose 'Disconnect from Graph and remove beta modules'
-# $null = Disconnect-Graph
+Write-Verbose 'Disconnect from Graph and remove beta modules'
+$null = Disconnect-MgGraph
 Get-Module -Name Microsoft.Graph.Beta.* | Remove-Module -Force
 
 # (Get-MgBetaDirectorySetting -DirectorySettingId $settingsObjectID).Values
@@ -530,6 +527,6 @@ $spoSite | Set-SPOSite -LockState ReadOnly
 #endregion Exercise 8: Manage lock states
 
 Write-Verbose 'Disconnect from Exchange, SharePoint, and Microsoft Graph'
-Disconnect-ExchangeOnline
+Disconnect-ExchangeOnline -Confirm:$false
 Disconnect-SPOService
-$null = Disconnect-Graph
+$null = Disconnect-MgGraph
