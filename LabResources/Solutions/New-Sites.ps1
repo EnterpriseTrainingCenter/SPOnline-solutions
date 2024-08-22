@@ -517,9 +517,9 @@ if (-not (Get-SPOSite -Filter "Url -eq '$newSiteUrl'")) {
 
 #endregion Exercise 5: Change a site address
 
-#region Exercise 8: Manage lock states
+#region Exercise 6: Manage lock states
 
-Write-Host '    Exercise 8: Manage lock states'
+Write-Host '    Exercise 6: Manage lock states'
 
 #region Task 2: Set the tenant's unavailability page
 
@@ -551,7 +551,7 @@ Set-SPOSite `
         -LockState ReadOnly
 
 #endregion Task 5: Make a site read-only
-#endregion Exercise 8: Manage lock states
+#endregion Exercise 6: Manage lock states
 
 Write-Verbose 'Disconnect from Exchange, SharePoint, and Microsoft Graph'
 Disconnect-ExchangeOnline -Confirm:$false
