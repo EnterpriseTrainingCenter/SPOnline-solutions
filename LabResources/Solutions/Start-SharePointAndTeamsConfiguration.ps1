@@ -208,11 +208,11 @@ powershell.exe -File $file $verbose
 
 #region Task 5: Verify the functionality of the PowerShell modules
 
-Write-Host '        Task 5: Verify the functionality of the PowerShell modules'
+# Write-Host '        Task 5: Verify the functionality of the PowerShell modules'
 
-Write-Verbose 'Import the modules'
-Import-Module Microsoft.Graph
-Import-Module MicrosoftTeams # Always last
+# Write-Verbose 'Import the modules'
+# Import-Module Microsoft.Graph
+# Import-Module MicrosoftTeams # Always last
 
 #endregion Exercise 1: Get started with PowerShell
 
