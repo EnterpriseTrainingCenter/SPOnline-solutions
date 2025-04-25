@@ -133,31 +133,14 @@ Write-Host '    Exercise 1: Get started with PowerShell'
 
 Write-Host '        Task 1: Install WinGet'
 
-if ($PSEdition -eq 'Core') {
-    Import-Module -Name Appx -UseWindowsPowerShell
-}
-
-if ($PSEdition -eq 'Desktop') {
-    Import-Module -Name Appx
-}
-
-Install-AppxPackage `
-    -Name 'Microsoft.VCLibs.140.00' `
-    -Source 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx' `
-    -Filename 'Microsoft.VCLibs.x64.14.00.Desktop.appx' `
-    -Description 'Microsoft Visual C++ 2015 Redistributable'
-Install-AppxPackage `
-    -Name 'Microsoft.UI.Xaml.2.8' `
-    -Source `
-        'https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx' `
-    -Filename 'Microsoft.UI.Xaml.2.8.x64.appx' `
-    -Description 'WinUI3'
-Install-AppxPackage `
-    -Name 'Microsoft.DesktopAppInstaller' `
-    -Source 'https://aka.ms/getwinget' `
-    -Filename 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle' `
-    -Description 'WinGet' `
-    -MinimumVersion '1.23.1911'
+Write-Verbose "Installing WinGet PowerShell module from PSGallery..."
+Install-PackageProvider -Name NuGet -Force | Out-Null
+Install-Module `
+    -Name Microsoft.WinGet.Client `
+    -MinimumVersion 1.10.340 -Repository PSGallery | 
+Out-Null
+Write-Verbose "Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet..."
+Repair-WinGetPackageManager
 
 #endregion Task 1: Install WinGet
 
