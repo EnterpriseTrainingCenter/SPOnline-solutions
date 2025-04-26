@@ -213,7 +213,8 @@ Write-Host '        Task 2: Verify the SharePoint Administrator role holders'
 Write-Verbose 'Sign in to Microsoft Graph'
 Write-Warning `
     'In the web browser window, that just opened, sign in with your Office 365 Tenant Credentials for the Global Admin and accept the permissions requests.'
-Connect-MgGraph -Scopes 'RoleManagement.ReadWrite.Directory' -NoWelcome
+Connect-MgGraph `
+    -Scopes 'RoleManagement.ReadWrite.Directory', 'User.Read.All ' -NoWelcome
 
 Write-Verbose 'Get the SharePoint Administrator role'
 $roleName = 'SharePoint Administrator'
