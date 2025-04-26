@@ -139,8 +139,11 @@ Install-Module `
     -Name Microsoft.WinGet.Client `
     -MinimumVersion 1.10.340 -Repository PSGallery | 
 Out-Null
-Write-Verbose "Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet..."
+Write-Verbose 'Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet...'
 Repair-WinGetPackageManager
+
+Write-Verbose 'Disable certificate pinning for Microsoft Store'
+winget settings --enable BypassCertificatePinningForMicrosoftStore
 
 #endregion Task 1: Install WinGet
 
